@@ -1,0 +1,2 @@
+{"timestamp": 1761266624, "group": "SU3", "toggles_sha256": "e4cf02812ac519f2058a701602b8805e3e1f69137056aeb58980db19fc92b093", "margin": 1e-07, "pass": true}
+{"timestamp": 1761266625, "group": "SU4", "toggles_sha256": "e4cf02812ac519f2058a701602b8805e3e1f69137056aeb58980db19fc92b093", "margin": 0.002, "pass": false}
