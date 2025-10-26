@@ -1,0 +1,92 @@
+{
+  "demo_version": "v1.0",
+  "timestamp_utc": "2025-10-25T23:33:39.259176Z",
+  "axioms": {
+    "A1_unit_step": true,
+    "A2_reserved": [
+      1,
+      2,
+      3
+    ],
+    "A3_monotone": true,
+    "Nmin": 2,
+    "Nmax": 8
+  },
+  "alternatives": {
+    "fold N": {
+      "ok": false,
+      "why": "violates A2 at N=2: f(N)=2 in reserved (1, 2, 3)"
+    },
+    "rank N-1": {
+      "ok": false,
+      "why": "violates A2 at N=2: f(N)=1 in reserved (1, 2, 3)"
+    },
+    "coxeter N": {
+      "ok": false,
+      "why": "violates A2 at N=2: f(N)=2 in reserved (1, 2, 3)"
+    },
+    "dim N^2-1": {
+      "ok": false,
+      "why": "violates A2 at N=2: f(N)=3 in reserved (1, 2, 3)"
+    }
+  },
+  "affine_c": 2,
+  "table": [
+    {
+      "N": 2,
+      "f(N)": 4,
+      "rank": 1,
+      "dim": 3,
+      "coxeter": 2,
+      "pos_roots": 1
+    },
+    {
+      "N": 3,
+      "f(N)": 5,
+      "rank": 2,
+      "dim": 8,
+      "coxeter": 3,
+      "pos_roots": 3
+    },
+    {
+      "N": 4,
+      "f(N)": 6,
+      "rank": 3,
+      "dim": 15,
+      "coxeter": 4,
+      "pos_roots": 6
+    },
+    {
+      "N": 5,
+      "f(N)": 7,
+      "rank": 4,
+      "dim": 24,
+      "coxeter": 5,
+      "pos_roots": 10
+    },
+    {
+      "N": 6,
+      "f(N)": 8,
+      "rank": 5,
+      "dim": 35,
+      "coxeter": 6,
+      "pos_roots": 15
+    },
+    {
+      "N": 7,
+      "f(N)": 9,
+      "rank": 6,
+      "dim": 48,
+      "coxeter": 7,
+      "pos_roots": 21
+    },
+    {
+      "N": 8,
+      "f(N)": 10,
+      "rank": 7,
+      "dim": 63,
+      "coxeter": 8,
+      "pos_roots": 28
+    }
+  ]
+}

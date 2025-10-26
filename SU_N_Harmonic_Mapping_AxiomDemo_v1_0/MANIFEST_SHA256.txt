@@ -1,0 +1,6 @@
+449e7972d9cf8f68e802fb11a607edc54e484354c641d5dbcaeb4666ec5250d2  README.md  1045 bytes
+ddedccb0d7d5e3686358d276bfaf3ded7c37f6404950c0f3ee90763018244c72  __pycache__/group_mapping.cpython-311.pyc  3563 bytes
+90d270792f074eac6975ddbde0712e19da28e974636a8d4e30ef51c1a0271bcc  examples/console_output.txt  1154 bytes
+35ab94a146bff9a7879f657113fe6ab13a73b5961d8d04997f8836600ceb7c87  examples/mapping_log.json  1557 bytes
+b53b5f81c84826c4876c6ff419c43ac54d6b14beb66c3bb6619f64801cebf73c  group_mapping.py  2097 bytes
+66ccb7c723a1034eee58393c41bfbc5db2ea938fc09e7fdda710b39b1d5f7486  mapping_demo.py  4517 bytes
