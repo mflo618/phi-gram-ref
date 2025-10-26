@@ -1,1 +1,0 @@
-SU3 margin = 1.000000e-07\nSU4 margin = 2.000000e-03\n
