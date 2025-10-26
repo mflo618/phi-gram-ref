@@ -1,5 +1,3 @@
----
-
 # Repo layout
 
 ```
