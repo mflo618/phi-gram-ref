@@ -1,0 +1,75 @@
+{
+  "generated_utc": "2025-10-26T17:13:34Z",
+  "files": [
+    {
+      "name": "HOW_TO_VERIFY.md",
+      "bytes": 951,
+      "sha256": "0343d46c5749a5317d83b5899eb07284e352b1d16e2bc3074c02d627b08bf195"
+    },
+    {
+      "name": "README_AUDIT.md",
+      "bytes": 71,
+      "sha256": "d547adb691b6d08d9a406eaf52ff6649f42fe1d89e0001e0d2c0d0b56596d620"
+    },
+    {
+      "name": "RUN_AUDIT_SUITE.sh",
+      "bytes": 701,
+      "sha256": "5cec219ba98792918a9e4004576bda3b88ded7ad5a60e643394a7088076440aa"
+    },
+    {
+      "name": "alpha_from_scale.py",
+      "bytes": 886,
+      "sha256": "0e9bae462b55c4ea3aac3ac51897c7f737be24e06e3225645d03b3f1c7db73ae"
+    },
+    {
+      "name": "alt_hypothesis_sweep.py",
+      "bytes": 1797,
+      "sha256": "c6f46928686ce8a8b4264cff8c03f2de3da711cc3d3c2c59fd3c78e442daf492"
+    },
+    {
+      "name": "density_certificate_v2.py",
+      "bytes": 792,
+      "sha256": "ddb95c090ba79769142a637d4e3132038dba02f6ca74250866ec751071cfcdc1"
+    },
+    {
+      "name": "electron_density_certificate.py",
+      "bytes": 503,
+      "sha256": "c352ce3ec7b5068f1968803d4f25e993aadcdfc9d0a0c31af8fe928cff237759"
+    },
+    {
+      "name": "g_electron.py",
+      "bytes": 544,
+      "sha256": "a3863b8328ba271e1a43506198a0f36c32e22a6eec6d66247a1bb19eeb9007b9"
+    },
+    {
+      "name": "independent_scale.sample.json",
+      "bytes": 108,
+      "sha256": "d66cc059d4087899faa45afae3893d7604018fa5c147807e5d2ee3184a8fd8e2"
+    },
+    {
+      "name": "lst_sigma_em0.py",
+      "bytes": 613,
+      "sha256": "1d1c6690d95de29bfcda929c9a94deab014cd282c8ee01778129be36df302549"
+    },
+    {
+      "name": "robustness_sweep.py",
+      "bytes": 1539,
+      "sha256": "4e8b6a1eebb595103f9309a9e14f93189d3735c8628115b4c71eac0eee37670d"
+    },
+    {
+      "name": "scale_from_alpha.py",
+      "bytes": 934,
+      "sha256": "5a239891fcdbe5200b21a8b0ec79c6f4bd974cad432f6e37386953b7404956b8"
+    },
+    {
+      "name": "static_guard_all.py",
+      "bytes": 2200,
+      "sha256": "41123fdd035e999c4c8c635504d90ebbe17d41a0e944334470283881be4293d4"
+    },
+    {
+      "name": "uncertainty_budget.py",
+      "bytes": 1802,
+      "sha256": "a7f266ec48e02e2ce6ad612e494cadbe14d5dfbf560430e3f08a6cbef82b4783"
+    }
+  ]
+}
