@@ -13,13 +13,14 @@ Usage examples:
   python phi_gram_ref.py --no-check-pn --check-b-doubling
   python phi_gram_ref.py --cesaro-start-T    # exclude identity term from Cesàro sum
   python phi_gram_ref.py --check-dynamics --N-dynamics 256
+  python phi_gram_ref.py --harmonics 4,5     # NEW: pick adjacent harmonic modes
 
 Outputs:
   - phi_gram_summary.json     (summary per group)
   - scan_<group>.json         (coarse + refined scan points with metrics)
 
 Model sketch:
-  Boundary Möbius with a = r·e^{i·delta}, composed with an in-plane twist τ in W = span{b5,b6}.
+  Boundary Möbius with a = r·e^{i·delta}, composed with an in-plane twist τ in W = span{b_m,b_{m+1}}.
   Pullback on L²(dθ) uses the fused angle map θ_src_total and multiplies by √(dθ_src/dθ) for unitarity.
   Cesàro projector: P_N = (1/N) Σ_{k=0}^{N-1} T^k (or, with --cesaro-start-T, from k=1 to N).
 
@@ -62,12 +63,10 @@ def _coherence_bar(rel_min: float, style, width: int = 20) -> str:
     """Render a left-filled bar where SMALLER rel_min fills MORE cells (more coherent).
     rel_min=0 → full bar; rel_min≥0.3 → empty bar. Threshold ticks at 0.03 and 0.15.
     """
-    # map rel_min ∈ [0, 0.3+] to fill ∈ [1.0, 0.0]
     x = max(0.0, min(1.0, 1.0 - (rel_min / 0.3)))
     filled = int(round(x * width))
     empty = width - filled
     bar = '█' * filled + '░' * empty
-    # choose bar color by thresholds
     color = 'green' if rel_min <= 0.03 else ('yellow' if rel_min <= 0.15 else 'red')
     return style.color(f"[{bar}]", color)
 
@@ -84,8 +83,8 @@ def periodic_interp(values: np.ndarray, theta_src: np.ndarray) -> np.ndarray:
     """
     B = values.shape[0]
     two_pi = 2.0 * np.pi
-    x = np.mod(theta_src, two_pi) * (B / two_pi)  # in [0, B)
-    i0 = np.floor(x).astype(int)                  # 0..B-1
+    x = np.mod(theta_src, two_pi) * (B / two_pi)
+    i0 = np.floor(x).astype(int)
     frac = x - i0
     i0 = i0 % B
     i1 = (i0 + 1) % B
@@ -97,14 +96,11 @@ def _theta(B: int) -> np.ndarray:
     """Cached uniform grid on [0, 2π)."""
     return np.linspace(0.0, 2.0*np.pi, B, endpoint=False)
 
-# ---------------- boundary basis ----------------
-def basis_b5(B: int) -> np.ndarray:
+# ---------------- generalized boundary basis ----------------
+def basis_b(B: int, mode: int) -> np.ndarray:
+    """Generates a complex exponential basis vector for a given harmonic mode."""
     theta = _theta(B)
-    return np.exp(1j * 5.0 * theta)
-
-def basis_b6(B: int) -> np.ndarray:
-    theta = _theta(B)
-    return np.exp(1j * 6.0 * theta)
+    return np.exp(1j * float(mode) * theta)
 
 # ---------------- primitive map ----------------
 def mobius_inverse_theta(theta_out: np.ndarray, a: complex, gamma: float) -> np.ndarray:
@@ -119,30 +115,26 @@ def mobius_inverse_theta(theta_out: np.ndarray, a: complex, gamma: float) -> np.
     return np.angle(z_in)
 
 # ---------------- projection to W ----------------
-def project_to_W(g: np.ndarray, b5: np.ndarray, b6: np.ndarray) -> np.ndarray:
+def project_to_W(g: np.ndarray, b1: np.ndarray, b2: np.ndarray) -> np.ndarray:
     B = g.shape[0]
     norm = 1.0 / B
-    c5 = norm * np.vdot(b5, g)
-    c6 = norm * np.vdot(b6, g)
-    return np.array([c5, c6], dtype=np.complex128)
+    c1 = norm * np.vdot(b1, g)
+    c2 = norm * np.vdot(b2, g)
+    return np.array([c1, c2], dtype=np.complex128)
 
 # ---------------- build T^τ(α,β) with fused map + √Jacobian ----------------
 def build_T_matrix(alpha: float, beta: float, tau: float, delta: float, r: float,
-                   B: int = 2048, gamma: float = 0.0,
-                   b5: Optional[np.ndarray] = None, b6: Optional[np.ndarray] = None,
+                   B: int, gamma: float,
+                   b1: np.ndarray, b2: np.ndarray,
                    ablate_jacobian: bool = False) -> np.ndarray:
     """
-    Construct the 2×2 matrix T in basis {b5,b6} for one cycle:
+    Construct the 2×2 matrix T in basis {b1,b2} for one cycle:
         rotate(α) → invert → rotate(β) → circumscribe(Möbius(a, γ)) → project to W
     Fused pullback:
         θ_src_total(θ) = -MobiusInverse(θ) + (β - α)
         dθ_src/dθ = (1 - |a|²) / |1 + \bar a · e^{-iγ} e^{iθ}|²
         g(θ) = √(dθ_src/dθ) · f(θ_src_total(θ))
     """
-    if b5 is None:
-        b5 = basis_b5(B)
-    if b6 is None:
-        b6 = basis_b6(B)
     a = r * np.exp(1j * delta)
 
     theta = _theta(B)
@@ -154,7 +146,6 @@ def build_T_matrix(alpha: float, beta: float, tau: float, delta: float, r: float
     z_out = np.exp(1j * theta)
     w = np.exp(-1j * gamma) * z_out
     jac = (1.0 - (r * r)) / (np.abs(1.0 + np.conj(a) * w) ** 2)
-    # numerical guard (should be ≥0 for r<1)
     jac = np.maximum(jac, 0.0)
     sqrt_jac = np.sqrt(jac)
     if ablate_jacobian:
@@ -163,11 +154,11 @@ def build_T_matrix(alpha: float, beta: float, tau: float, delta: float, r: float
     def apply_cycle_fused(f: np.ndarray) -> np.ndarray:
         return sqrt_jac * periodic_interp(f, theta_src_total)
 
-    g5 = apply_cycle_fused(b5)
-    g6 = apply_cycle_fused(b6)
-    c5 = project_to_W(g5, b5, b6)
-    c6 = project_to_W(g6, b5, b6)
-    T = np.column_stack([c5, c6])
+    g1 = apply_cycle_fused(b1)
+    g2 = apply_cycle_fused(b2)
+    c1 = project_to_W(g1, b1, b2)
+    c2 = project_to_W(g2, b1, b2)
+    T = np.column_stack([c1, c2])
 
     if tau != 0.0:
         # In-plane rotation by τ in W
@@ -191,7 +182,7 @@ def cesaro_projector(T: np.ndarray, N: int = 64, start_from_T: bool = False) -> 
         P /= N
         return P
     else:
-        P = np.zeros((2,2), dtype=np.complex128)  # start from T^1
+        P = np.zeros((2,2), dtype=np.complex128)
         Tk = np.eye(2, dtype=np.complex128)
         for _ in range(N):
             Tk = Tk @ T
@@ -200,15 +191,9 @@ def cesaro_projector(T: np.ndarray, N: int = 64, start_from_T: bool = False) -> 
         return P
 
 def projector_with_stability(T: np.ndarray, N: int = 64, start_from_T: bool = False):
-    """
-    Return P_N and ΔP₂N diagnostics:
-      delta_P_spectral = ‖P_{2N} - P_N‖₂ (spectral norm)
-      delta_P_maxabs   = max_ij |(P_{2N} - P_N)_{ij}|
-    """
     Pn  = cesaro_projector(T, N=N,   start_from_T=start_from_T)
     P2n = cesaro_projector(T, N=2*N, start_from_T=start_from_T)
     D = P2n - Pn
-    # spectral norm via largest singular value
     svals = np.linalg.svd(D, compute_uv=False)
     delta_spec = float(svals[0]) if svals.size else 0.0
     delta_maxabs = float(np.max(np.abs(D)))
@@ -216,17 +201,6 @@ def projector_with_stability(T: np.ndarray, N: int = 64, start_from_T: bool = Fa
 
 # ---------------- dynamic stability diagnostics ----------------
 def analyze_dynamics(T: np.ndarray, N_dynamics: int = 128):
-    """
-    Analyze the iterative evolution of P_k = (1/k) * sum_{i=1}^k T^i, k=1..N_dynamics.
-
-    Metrics:
-      - convergence_rate: mean of the Frobenius deltas ‖P_{k+1}-P_k‖_F over the second half.
-      - max_drift_angle: max arccos(|v_k · v_{k-1}|), where v_k is principal eigenvector of Hermitian(P_k).
-      - coherence_ratio: λ_max / λ_min of Hermitian(P_N), inf if λ_min ≤ 0.
-
-    Returns:
-      dict with convergence_rate, max_drift_angle, coherence_ratio, and the final spectrum.
-    """
     N = max(2, int(N_dynamics))
     Pk = np.zeros((2,2), dtype=np.complex128)
     Tk = np.eye(2, dtype=np.complex128)
@@ -235,34 +209,29 @@ def analyze_dynamics(T: np.ndarray, N_dynamics: int = 128):
     v_prev = None
 
     for k in range(1, N+1):
-        Tk = Tk @ T                         # T^k
-        Pk_next = (Pk * (k-1)/k) + (Tk / k) # incremental Cesàro update
+        Tk = Tk @ T
+        Pk_next = (Pk * (k-1)/k) + (Tk / k)
 
-        # Frobenius step delta
         if k >= 2:
             D = Pk_next - Pk
             deltas.append(float(np.linalg.norm(D, ord='fro')))
 
-        # principal direction from Hermitian(P_k)
         Hk = 0.5 * (Pk_next + Pk_next.conj().T)
-        w, V = np.linalg.eigh(Hk)           # Hermitian -> real eigvals, ortho vecs
+        w, V = np.linalg.eigh(Hk)
         idx = int(np.argmax(w))
         v_k = V[:, idx] / np.linalg.norm(V[:, idx])
         if v_prev is not None:
-            # angle ∈ [0, π/2]: arccos(|⟨v_k, v_prev⟩|)
             dot = abs(np.vdot(v_k, v_prev))
-            dot = min(1.0, max(0.0, float(dot.real)))  # numeric clip
+            dot = min(1.0, max(0.0, float(dot.real)))
             angles.append(float(np.arccos(dot)))
         v_prev = v_k
 
         Pk = Pk_next
 
-    # convergence rate over the second half of deltas
     half = len(deltas) // 2
     conv_rate = float(np.mean(deltas[half:])) if deltas else 0.0
     max_drift = float(np.max(angles)) if angles else 0.0
 
-    # coherence from final projector's spectrum
     wN, _ = np.linalg.eigh(0.5 * (Pk + Pk.conj().T))
     lam_min = float(np.min(wN))
     lam_max = float(np.max(wN))
@@ -270,7 +239,6 @@ def analyze_dynamics(T: np.ndarray, N_dynamics: int = 128):
         coh_ratio = float('inf')
     else:
         coh_ratio = float(lam_max / lam_min)
-    # regularized version to avoid inf when λ_min is tiny negative due to roundoff
     trace = float(lam_min + lam_max)
     floor = max(1e-16 * max(trace, 1.0), 0.0)
     coh_ratio_reg = float(lam_max / max(lam_min, floor)) if lam_max > 0 else float('nan')
@@ -286,11 +254,6 @@ def analyze_dynamics(T: np.ndarray, N_dynamics: int = 128):
 
 # ---------------- Gram + diagnostics ----------------
 def gram_from_projector(P: np.ndarray):
-    """
-    Returns Gram matrix G for u=P e1, v=P e2 and a diagnostic dict with:
-      a, c, Re(b), Im(b), detG, h_min (complex parts), min_norm,
-      λ_min(G), λ_max(G), cond(G), psd_violation, psd_margin, stable_h.
-    """
     e1 = np.array([1.0+0j, 0.0+0j])
     e2 = np.array([0.0+0j, 1.0+0j])
     u = P @ e1
@@ -302,7 +265,6 @@ def gram_from_projector(P: np.ndarray):
     G = np.array([[a, b], [np.conj(b), c]], dtype=np.complex128)
     detG = (a * c - (np.abs(b) ** 2)).real
 
-    # Minimizer and min norm
     if c > 0.0:
         h_min = - b / c
         min_norm = (a - (np.abs(b) ** 2) / c).real
@@ -310,8 +272,7 @@ def gram_from_projector(P: np.ndarray):
         h_min = np.nan + 1j*np.nan
         min_norm = np.nan
 
-    # PSD diagnostics
-    lam = np.linalg.eigvalsh(G)  # Hermitian eigvals, real
+    lam = np.linalg.eigvalsh(G)
     lam_min = float(lam[0])
     lam_max = float(lam[-1])
     psd_violation = (lam_min < -EPS_PSD)
@@ -328,7 +289,7 @@ def gram_from_projector(P: np.ndarray):
         "lambda_max_G": lam_max,
         "cond_G": cond_G,
         "psd_violation": bool(psd_violation),
-        "psd_margin": lam_min,               # how far above/below 0
+        "psd_margin": lam_min,
         "stable_h": bool(c > EPS_H)
     }
     return G, diag
@@ -340,11 +301,11 @@ def spectral_radius(T: np.ndarray) -> float:
 # ---------------- evaluation helper ----------------
 def evaluate_point(alpha: float, beta: float, tau: float, delta_eff: float, r: float,
                    B: int, Nproj: int, check_pn: bool, start_from_T: bool,
-                   b5: Optional[np.ndarray] = None, b6: Optional[np.ndarray] = None,
+                   b1: np.ndarray, b2: np.ndarray,
                    check_dynamics: bool = False, N_dynamics: int = 128,
                    ablate_jacobian: bool = False):
     T = build_T_matrix(alpha=alpha, beta=beta, tau=tau, delta=delta_eff, r=r,
-                       B=B, gamma=0.0, b5=b5, b6=b6, ablate_jacobian=ablate_jacobian)
+                       B=B, gamma=0.0, b1=b1, b2=b2, ablate_jacobian=ablate_jacobian)
     rho = spectral_radius(T)
     if check_pn:
         P, pn_diag = projector_with_stability(T, N=Nproj, start_from_T=start_from_T)
@@ -363,18 +324,18 @@ def evaluate_point(alpha: float, beta: float, tau: float, delta_eff: float, r: f
 # ---------------- coarse scan ----------------
 def coarse_scan(group: str, tau: float, delta: float, r: float,
                 B: int, Nproj: int, grid: int, check_pn: bool, start_from_T: bool,
+                m1: int, m2: int,
                 check_dynamics: bool = False, N_dynamics: int = 128,
                 objective: str = "relmin", ablate_jacobian: bool = False):
     two_pi = 2.0 * np.pi
-    if group.lower() == 'su3':
-        eff_delta = delta
-    else:
-        # small parity offset for SU(4)
+    # Apply the historical SU(4) parity offset ONLY for the legacy (5,6) case.
+    eff_delta = delta
+    if m1 == 5 and m2 == 6 and group.lower() == 'su4':
         eff_delta = delta + np.pi/7.0
 
     # Precompute bases once for speed
-    b5 = basis_b5(B)
-    b6 = basis_b6(B)
+    b1 = basis_b(B, m1)
+    b2 = basis_b(B, m2)
 
     records = []
     best = None
@@ -384,11 +345,11 @@ def coarse_scan(group: str, tau: float, delta: float, r: float,
         for ib in range(grid):
             beta = ib * two_pi / grid
             rec = evaluate_point(alpha, beta, tau, eff_delta, r, B, Nproj, check_pn, start_from_T,
-                                 b5=b5, b6=b6,
+                                 b1=b1, b2=b2,
                                  check_dynamics=check_dynamics, N_dynamics=N_dynamics,
                                  ablate_jacobian=ablate_jacobian)
             records.append(rec)
-            # Unified scoring across groups to avoid bias
+            # Unified scoring across groups (direction still uses group rule)
             if objective == "relmin":
                 score = rec.get("rel_min", float("inf"))
             elif objective == "det":
@@ -407,7 +368,8 @@ def coarse_scan(group: str, tau: float, delta: float, r: float,
 # ---------------- local refinement ----------------
 def local_refine(group: str, tau: float, eff_delta: float, r: float,
                  B: int, Nproj: int,
-                 center_ab, rounds: int = 1, local_grid: int = 12, radius: float = 0.2,
+                 center_ab, m1: int, m2: int,
+                 rounds: int = 1, local_grid: int = 12, radius: float = 0.2,
                  check_pn: bool = True, start_from_T: bool = False,
                  check_dynamics: bool = False, N_dynamics: int = 128,
                  objective: str = "relmin", ablate_jacobian: bool = False):
@@ -417,14 +379,14 @@ def local_refine(group: str, tau: float, eff_delta: float, r: float,
     refinements = []
 
     # Precompute bases once for speed
-    b5 = basis_b5(B)
-    b6 = basis_b6(B)
+    b1 = basis_b(B, m1)
+    b2 = basis_b(B, m2)
 
-    # Degenerate grid guard: evaluate only the center point
     if local_grid < 2:
         rec = evaluate_point(cx, cy, tau, eff_delta, r, B, Nproj, check_pn, start_from_T,
-                             b5=b5, b6=b6,
-                             check_dynamics=check_dynamics, N_dynamics=N_dynamics)
+                             b1=b1, b2=b2,
+                             check_dynamics=check_dynamics, N_dynamics=N_dynamics,
+                             ablate_jacobian=ablate_jacobian)
         rec["refined"] = True
         return rec, [rec]
 
@@ -435,7 +397,7 @@ def local_refine(group: str, tau: float, eff_delta: float, r: float,
             for ib in range(local_grid):
                 beta = cy + radius * ((ib / (local_grid-1)) - 0.5) * two_pi
                 rec = evaluate_point(alpha, beta, tau, eff_delta, r, B, Nproj, check_pn, start_from_T,
-                                     b5=b5, b6=b6,
+                                     b1=b1, b2=b2,
                                      check_dynamics=check_dynamics, N_dynamics=N_dynamics,
                                      ablate_jacobian=ablate_jacobian)
                 rec["refined"] = True
@@ -454,7 +416,6 @@ def local_refine(group: str, tau: float, eff_delta: float, r: float,
                 else:
                     if (group.lower() == 'su3' and score < best[0]) or (group.lower() == 'su4' and score > best[0]):
                         best = (score, rec)
-        # shrink radius and center around new best
         refinements.extend(local_records)
         cx, cy = best[1]["alpha"], best[1]["beta"]
         radius *= 0.5
@@ -463,24 +424,24 @@ def local_refine(group: str, tau: float, eff_delta: float, r: float,
 # ---------------- B-doubling check ----------------
 def b_doubling_check(alpha: float, beta: float, tau: float, delta_eff: float, r: float,
                      B: int, Nproj: int, check_pn: bool, start_from_T: bool,
+                     m1: int, m2: int,
                      check_dynamics: bool = False, N_dynamics: int = 128):
     """
     Recompute the same point at 2B and report key metrics and deltas.
     """
     # Baseline at B
-    b5_B = basis_b5(B); b6_B = basis_b6(B)
+    b1_B = basis_b(B, m1); b2_B = basis_b(B, m2)
     rec_B = evaluate_point(alpha, beta, tau, delta_eff, r, B, Nproj, check_pn, start_from_T,
-                           b5=b5_B, b6=b6_B,
+                           b1=b1_B, b2=b2_B,
                            check_dynamics=check_dynamics, N_dynamics=N_dynamics)
 
     # Re-evaluate at 2B
     B2 = 2 * B
-    b5_B2 = basis_b5(B2); b6_B2 = basis_b6(B2)
+    b1_B2 = basis_b(B2, m1); b2_B2 = basis_b(B2, m2)
     rec_B2 = evaluate_point(alpha, beta, tau, delta_eff, r, B2, Nproj, check_pn, start_from_T,
-                            b5=b5_B2, b6=b6_B2,
+                            b1=b1_B2, b2=b2_B2,
                             check_dynamics=check_dynamics, N_dynamics=N_dynamics)
 
-    # Pack comparison
     compare = {
         "B2": B2,
         "detG_B2": rec_B2["detG"],
@@ -542,9 +503,23 @@ def main():
     # Ablations
     ap.add_argument("--ablate-jacobian", action="store_true", help="disable √Jacobian weight in pullback")
     ap.add_argument("--compare-ablation", action="store_true", help="run baseline and ablation side-by-side and report deltas")
+    # NEW: Harmonic modes
+    ap.add_argument("--harmonics", type=str, default="5,6",
+                    help="Comma-separated pair of harmonic modes to test (e.g., '4,5').")
 
     args = ap.parse_args()
     style = _Style(enable=(not args.no_color) and sys.stdout.isatty())
+
+    # Parse and validate harmonic modes
+    try:
+        m1_str, m2_str = args.harmonics.split(',')
+        m1 = int(m1_str)
+        m2 = int(m2_str)
+        if m2 != m1 + 1:
+            raise ValueError("Harmonic modes must be adjacent integers (e.g., '4,5').")
+    except Exception as e:
+        print(f"Error parsing --harmonics argument: {e}")
+        sys.exit(1)
 
     # Basic validation
     if args.B < 2:
@@ -565,6 +540,7 @@ def main():
             group=g, tau=args.tau, delta=args.delta, r=args.r,
             B=args.B, Nproj=args.Nproj, grid=args.grid,
             check_pn=args.check_pn, start_from_T=args.cesaro_start_T,
+            m1=m1, m2=m2,
             check_dynamics=args.check_dynamics, N_dynamics=args.N_dynamics,
             objective=args.objective, ablate_jacobian=False
         )
@@ -581,7 +557,8 @@ def main():
         best_refined, ref_records = local_refine(
             group=g, tau=args.tau, eff_delta=eff_delta, r=args.r,
             B=args.B, Nproj=args.Nproj,
-            center_ab=best, rounds=max(0, args.refine),
+            center_ab=best, m1=m1, m2=m2,
+            rounds=max(0, args.refine),
             local_grid=args.refine_grid, radius=args.refine_radius,
             check_pn=args.check_pn, start_from_T=args.cesaro_start_T,
             check_dynamics=args.check_dynamics, N_dynamics=args.N_dynamics,
@@ -597,7 +574,6 @@ def main():
               f"detG={best_refined['detG']:.3e}  minNorm={best_refined['min_norm']:.3e}  "
               f"rho(T)={best_refined['rho_T']:.6f}{rho_flag}  λ_min(G)={best_refined['lambda_min_G']:.3e}{psd_flag}{pn_str}")
 
-
         # Optional: run ablation branch
         ablation_out = None
         if args.compare_ablation:
@@ -605,21 +581,21 @@ def main():
                 group=g, tau=args.tau, delta=args.delta, r=args.r,
                 B=args.B, Nproj=args.Nproj, grid=args.grid,
                 check_pn=args.check_pn, start_from_T=args.cesaro_start_T,
+                m1=m1, m2=m2,
                 check_dynamics=args.check_dynamics, N_dynamics=args.N_dynamics,
                 objective=args.objective, ablate_jacobian=True
             )
             best_refined_ab, ref_records_ab = local_refine(
                 group=g, tau=args.tau, eff_delta=eff_delta_ab, r=args.r,
                 B=args.B, Nproj=args.Nproj,
-                center_ab=best_ab, rounds=max(0, args.refine),
+                center_ab=best_ab, m1=m1, m2=m2,
+                rounds=max(0, args.refine),
                 local_grid=args.refine_grid, radius=args.refine_radius,
                 check_pn=args.check_pn, start_from_T=args.cesaro_start_T,
                 check_dynamics=args.check_dynamics, N_dynamics=args.N_dynamics,
                 objective=args.objective, ablate_jacobian=True
             )
-            # Print concise comparison
             print(style.color(f"[{g}] Ablation (no √Jacobian) best detG={best_refined_ab['detG']:.3e} minNorm={best_refined_ab['min_norm']:.3e} rel_min={best_refined_ab.get('rel_min', float('nan')):.3e}", 'yellow'))
-            # Store for summary
             ablation_out = {"best": best_refined_ab, "records": rec_ab, "refined": ref_records_ab}
 
         # Optional B-doubling check at the final best
@@ -629,6 +605,7 @@ def main():
                 alpha=best_refined["alpha"], beta=best_refined["beta"],
                 tau=args.tau, delta_eff=eff_delta, r=args.r,
                 B=args.B, Nproj=args.Nproj, check_pn=args.check_pn, start_from_T=args.cesaro_start_T,
+                m1=m1, m2=m2,
                 check_dynamics=args.check_dynamics, N_dynamics=args.N_dynamics
             )
             print(f"[{g}] B-doubling: B→{b2['B2']}  "
@@ -643,11 +620,11 @@ def main():
         if g == "su3":
             trG = best_refined["a"] + best_refined["c"]
             near_rank1 = (best_refined["lambda_min_G"] <= 1e-6 * trG)
-            # real-h estimate (if that's the certificate’s constraint)
             h_star_real = - best_refined["b_real"] / best_refined["c"] if best_refined["c"] != 0.0 else float('nan')
 
         out = {
             "group": g,
+            "harmonics": [m1, m2],
             "B_samples": args.B,
             "Nproj": args.Nproj,
             "grid": args.grid,
@@ -668,7 +645,6 @@ def main():
             "b_real": best_refined["b_real"],
             "b_imag": best_refined["b_imag"],
 
-            # Diagnostics at best
             "rho_T_at_best": best_refined["rho_T"],
             "lambda_min_G_at_best": best_refined["lambda_min_G"],
             "lambda_max_G_at_best": best_refined["lambda_max_G"],
@@ -685,7 +661,6 @@ def main():
             out["max_drift_angle_at_best"] = best_refined.get("max_drift_angle", float('nan'))
             out["coherence_ratio_at_best"] = best_refined.get("coherence_ratio", float('nan'))
             out["coherence_ratio_reg_at_best"] = best_refined.get("coherence_ratio_reg", float('nan'))
-            # include raw final dynamic eigen spectrum if present
             if "dyn_lambda_min" in best_refined:
                 out["dyn_lambda_min_at_best"] = best_refined["dyn_lambda_min"]
                 out["dyn_lambda_max_at_best"] = best_refined["dyn_lambda_max"]
@@ -696,11 +671,7 @@ def main():
             out["B_doubling"] = b2
 
         out['rel_min_norm'] = float(out['min_norm_at_best'] / max(out['a_entry'] + out['c_entry'], 1e-30))
-        # Placeholder; string printed later. If you parse JSON only, recompute from rel_min_norm.
-        out['verdict'] = None
-        out['rel_min_norm'] = float(out['min_norm_at_best'] / max(out['a_entry'] + out['c_entry'], 1e-30))
-        # Placeholder; string printed later. If you parse JSON only, recompute from rel_min_norm.
-        out['verdict'] = None
+        out['verdict'] = None  # placeholder, console prints the verdict
         # Top-K points by the same objective for transparency
         def _score(rec):
             if args.objective == 'relmin':
@@ -729,12 +700,10 @@ def main():
     with open("phi_gram_summary.json", "w") as f:
         json.dump(summary, f, indent=2)
 
-
     # ---------------- Bridge computation (Appendix C) ----------------
     if args.bridge and all(k in summary for k in ("su3","su4")):
         s3 = summary["su3"]
         s4 = summary["su4"]
-        # choose convergence rates
         def _pick_conv(sx):
             if args.bridge_agg == "median_topk" and "topK" in sx and sx["topK"]:
                 vals = [r.get("convergence_rate", float("nan")) for r in sx["topK"] if not (r.get("convergence_rate") is None)]
@@ -743,33 +712,27 @@ def main():
                     vals.sort()
                     mid = vals[len(vals)//2] if len(vals)%2==1 else 0.5*(vals[len(vals)//2-1]+vals[len(vals)//2])
                     return mid
-            # fallback to the "best" convergence rate
             return sx.get("convergence_rate_at_best", float("nan"))
         conv3 = _pick_conv(s3)
         conv4 = _pick_conv(s4)
 
-        # Guardrails
         if not (isinstance(conv3,(int,float)) and conv3>0 and isinstance(conv4,(int,float)) and conv4>0):
             print(style.color("[bridge] Missing/invalid convergence rates; cannot compute bridge.", "red"))
         else:
             R0_3 = float(args.R0_SU3)
             R0_4 = float(args.R0_SU4)
-            # Δα̂ = ln(R0(SU4)/R0(SU3)) / ln(1/conv_SU3)
             try:
                 delta_alpha_hat = (np.log(R0_4 / R0_3)) / (np.log(1.0 / conv3))
-            except Exception as e:
+            except Exception:
                 delta_alpha_hat = float("nan")
 
-            # Prediction for SU(4): R_pred = R0_4 * (1/conv4)^{Δα̂}
             if np.isfinite(delta_alpha_hat):
                 phi4 = (1.0 / conv4) ** delta_alpha_hat
                 R4_pred = R0_4 * phi4
-                # Discriminant factor from dynamics only: (conv4/conv3)^{Δα̂}
                 discr = (conv4 / conv3) ** delta_alpha_hat
             else:
                 phi4 = float("nan"); R4_pred = float("nan"); discr = float("nan")
 
-            # Log to console
             print("")
             print(style.color("=== One-Loop Bridge (Appendix C) ===", "bold", "magenta"))
             print(f"Baseline: R0(SU3)={R0_3:.6f}, R0(SU4)={R0_4:.6f}")
@@ -780,7 +743,6 @@ def main():
             dev = R4_pred - R0_4
             print(f"Deviation from baseline R0(SU4): {dev:+.6e} ({(dev/R0_4)*100:+.2f}%)")
 
-            # Store in summary
             summary["bridge"] = {
                 "R0_SU3": R0_3, "R0_SU4": R0_4,
                 "conv_SU3": conv3, "conv_SU4": conv4,
@@ -795,7 +757,7 @@ def main():
     for g in groups:
         s = summary[g]
         print("")
-        print(f"=== {g.upper()} CERTIFICATE ===")
+        print(f"=== {g.upper()} CERTIFICATE === (harmonics {m1},{m2})")
         print(f"B={s['B_samples']}  Nproj={s['Nproj']}  grid={s['grid']}  "
               f"tau={s['tau']}  r={s['r']}  delta={s['delta']:.4f}  "
               f"Cesàro start={'T¹' if args.cesaro_start_T else 'I'}")
@@ -816,24 +778,15 @@ def main():
             print(f"near rank-1? {s['near_rank1']}   "
                   f"h_* (real estimate) ≈ {s['h_star_estimate_real']:.6f}   "
                   f"stable_h? {s['stable_h_at_best']}")
-        if args.check_dynamics:
+        if "convergence_rate_at_best" in s:
             print(f"Dynamic Analysis (N={args.N_dynamics}):")
             print(f"  Convergence Rate: {s.get('convergence_rate_at_best', float('nan')):.6e}")
             print(f"  Max Drift Angle:  {s.get('max_drift_angle_at_best', float('nan')):.6e} rad")
             print(f"  Coherence Ratio:  {s.get('coherence_ratio_at_best', float('nan')):.6e}")
             print(f"  Coherence Ratio (reg.):  {s.get('coherence_ratio_reg_at_best', float('nan')):.6e}")
-        # --- Verdict (layman-friendly, technically grounded) ---
-        # We score how "collapsed" the projector is by the relative minimum norm:
-        #   rel_min = min‖u + h v‖² / trace(G), where trace(G) = a + c.
-        # Smaller rel_min means the two directions have effectively merged (rank-1-like).
         trG = s['a_entry'] + s['c_entry']
         rel_min = s['min_norm_at_best'] / max(trG, 1e-30)
 
-        # Heuristics consistent with the paper’s qualitative split:
-        #   rel_min ≤ 0.03  → coherent resonance
-        #   0.03 < rel_min ≤ 0.15 → weak resonance
-        #   rel_min > 0.15  → geometric obstruction
-        # We further require stability: small ΔP₂N and a low convergence rate when available.
         dp_ok = True
         conv_ok = True
         if "delta_P_spectral_at_best" in s:
@@ -842,17 +795,14 @@ def main():
             conv_ok = (s["convergence_rate_at_best"] <= 3e-10)
 
         if rel_min <= 0.03 and dp_ok and conv_ok:
-            verdict = "Coherent resonance (projector nearly rank‑1; stable Cesàro)"
+            verdict = "Coherent resonance (projector nearly rank-1; stable Cesàro)"
         elif rel_min <= 0.15 and dp_ok:
             verdict = "Weak resonance (partial collapse with stable Cesàro)"
         else:
             verdict = "Geometric obstruction (directions stay distinct; no collapse)"
 
-        # Print a compact, friendly summary with icons and optional colors.
         banner_color = 'green' if 'Coherent' in verdict else ('yellow' if 'Weak' in verdict else 'red')
         print(style.color(f"Verdict: {verdict}", 'bold', banner_color))
-        # metric checks with ticks
-        thr_rel = 0.03 if 'Coherent' in verdict else (0.15 if 'Weak' in verdict else None)
         ok_rel = (rel_min <= 0.03)
         ok_dp = True
         ok_conv = True
@@ -876,7 +826,6 @@ def main():
                   f"Δλ_min(G)={b2['delta_lambda_min_G_B2_minus_B']:.6e}, "
                   f"Δcond(G)={b2['delta_cond_G_B2_minus_B']:.6e}")
 
-    # One-time legend
     print("\nLegend: ✅ pass, ❌ fail; rel_min bar fills more on stronger coherence."
           " Thresholds: rel_min ≤ 0.03 → Coherent, 0.03–0.15 → Weak, > 0.15 → Obstruction.")
 
