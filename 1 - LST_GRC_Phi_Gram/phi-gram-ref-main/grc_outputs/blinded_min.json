@@ -1,0 +1,34 @@
+{
+  "masked_runs": [
+    {
+      "label": "B",
+      "metrics": {
+        "rel_min": 0.000434,
+        "convergence_rate": 6.773082e-10,
+        "rho_T": 4e-06,
+        "lambda_min": 0.000434,
+        "lambda_max": 0.0004340316,
+        "cond": null
+      },
+      "verdict": "PASS",
+      "stdout": "[su3] coarse best at (\u03b1,\u03b2)=(0.000000,0.000000)  detG=1.884e-07  minNorm=4.340e-04  rho(T)=0.000004  \u03bb_min(G)=4.340e-04  \u0394P\u2082N(\u2016\u00b7\u2016\u2082)=1.042e-02  \u0394P\u2082N(max)=1.042e-02\n[su3] final best at (\u03b1,\u03b2)=(-0.785398,-0.785398)  detG=1.884e-07  minNorm=4.340e-04  rho(T)=0.000004  \u03bb_min(G)=4.340e-04  \u0394P\u2082N(\u2016\u00b7\u2016\u2082)=1.042e-02  \u0394P\u2082N(max)=1.042e-02\n\n=== SU3 CERTIFICATE === (harmonics 5,6)\nB=1024  Nproj=48  grid=20  tau=0.02  r=0.08  delta=0.0000  Ces\u00e0ro start=I\nbest (alpha, beta) = (-0.785398, -0.785398)\ndet G = 1.883805e-07\nmin ||u + h v||^2 (complex-h) = 4.340249e-04\n\u03c1(T) = 0.000004  \u03bb_min(G) = 4.340249e-04  \u03bb_max(G) = 4.340316e-04  cond(G) = 1.000e+00  PSD violation? False\n\u0394P\u2082N(\u2016\u00b7\u2016\u2082) = 1.041671e-02   \u0394P\u2082N(max) = 1.041671e-02\nnear rank-1? False   h_* (real estimate) \u2248 0.000000   stable_h? True\nDynamic Analysis (N=128):\n  Convergence Rate: 6.773082e-10\n  Max Drift Angle:  0.000000e+00 rad\n  Coherence Ratio:  inf\n  Coherence Ratio (reg.):  3.430508e+08\nVerdict: Geometric obstruction (directions stay distinct; no collapse)\n  \u274c rel_min = 5.000e-01  (smaller is more coherent)\n    [\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591]  thresholds: 0.03 (coherent), 0.15 (weak)\n  \u274c Ces\u00e0ro stability \u0394P\u2082N(\u2016\u00b7\u2016\u2082) = 1.042e-02\n  \u274c Dynamic convergence rate = 6.773e-10\n\nLegend: \u2705 pass, \u274c fail; rel_min bar fills more on stronger coherence. Thresholds: rel_min \u2264 0.03 \u2192 Coherent, 0.03\u20130.15 \u2192 Weak, > 0.15 \u2192 Obstruction.\n"
+    },
+    {
+      "label": "A",
+      "metrics": {
+        "rel_min": 0.000434,
+        "convergence_rate": 8.901403e-10,
+        "rho_T": 6e-06,
+        "lambda_min": 0.000434,
+        "lambda_max": 0.0004340316,
+        "cond": null
+      },
+      "verdict": "PASS",
+      "stdout": "[su4] coarse best at (\u03b1,\u03b2)=(0.314159,0.314159)  detG=1.884e-07  minNorm=4.340e-04  rho(T)=0.000006  \u03bb_min(G)=4.340e-04  \u0394P\u2082N(\u2016\u00b7\u2016\u2082)=1.042e-02  \u0394P\u2082N(max)=1.042e-02\n[su4] final best at (\u03b1,\u03b2)=(-0.471239,-0.471239)  detG=1.884e-07  minNorm=4.340e-04  rho(T)=0.000006  \u03bb_min(G)=4.340e-04  \u0394P\u2082N(\u2016\u00b7\u2016\u2082)=1.042e-02  \u0394P\u2082N(max)=1.042e-02\n\n=== SU4 CERTIFICATE === (harmonics 6,7)\nB=1024  Nproj=48  grid=20  tau=0.02  r=0.08  delta=0.0000  Ces\u00e0ro start=I\nbest (alpha, beta) = (-0.471239, -0.471239)\ndet G = 1.883796e-07\nmin ||u + h v||^2 (complex-h) = 4.340316e-04\n\u03c1(T) = 0.000006  \u03bb_min(G) = 4.340228e-04  \u03bb_max(G) = 4.340316e-04  cond(G) = 1.000e+00  PSD violation? False\n\u0394P\u2082N(\u2016\u00b7\u2016\u2082) = 1.041671e-02   \u0394P\u2082N(max) = 1.041671e-02\nDynamic Analysis (N=128):\n  Convergence Rate: 8.901403e-10\n  Max Drift Angle:  0.000000e+00 rad\n  Coherence Ratio:  inf\n  Coherence Ratio (reg.):  3.441906e+08\nVerdict: Geometric obstruction (directions stay distinct; no collapse)\n  \u274c rel_min = 5.000e-01  (smaller is more coherent)\n    [\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591]  thresholds: 0.03 (coherent), 0.15 (weak)\n  \u274c Ces\u00e0ro stability \u0394P\u2082N(\u2016\u00b7\u2016\u2082) = 1.042e-02\n  \u274c Dynamic convergence rate = 8.901e-10\n\nLegend: \u2705 pass, \u274c fail; rel_min bar fills more on stronger coherence. Thresholds: rel_min \u2264 0.03 \u2192 Coherent, 0.03\u20130.15 \u2192 Weak, > 0.15 \u2192 Obstruction.\n"
+    }
+  ],
+  "unmask": {
+    "B": "su3",
+    "A": "su4"
+  }
+}

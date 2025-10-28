@@ -1,0 +1,73 @@
+{
+  "group": "su3",
+  "harmonics": [
+    5,
+    6
+  ],
+  "rows": [
+    {
+      "delta": 0.0,
+      "metrics": {
+        "rel_min": 0.000434,
+        "convergence_rate": 6.773082e-10,
+        "rho_T": 4e-06,
+        "lambda_min": 0.000434,
+        "lambda_max": 0.0004340316,
+        "cond": null
+      },
+      "stdout": "[su3] coarse best at (\u03b1,\u03b2)=(0.000000,0.000000)  detG=1.884e-07  minNorm=4.340e-04  rho(T)=0.000004  \u03bb_min(G)=4.340e-04  \u0394P\u2082N(\u2016\u00b7\u2016\u2082)=1.042e-02  \u0394P\u2082N(max)=1.042e-02\n[su3] final best at (\u03b1,\u03b2)=(-0.785398,-0.785398)  detG=1.884e-07  minNorm=4.340e-04  rho(T)=0.000004  \u03bb_min(G)=4.340e-04  \u0394P\u2082N(\u2016\u00b7\u2016\u2082)=1.042e-02  \u0394P\u2082N(max)=1.042e-02\n\n=== SU3 CERTIFICATE === (harmonics 5,6)\nB=1024  Nproj=48  grid=20  tau=0.02  r=0.08  delta=0.0000  Ces\u00e0ro start=I\nbest (alpha, beta) = (-0.785398, -0.785398)\ndet G = 1.883805e-07\nmin ||u + h v||^2 (complex-h) = 4.340249e-04\n\u03c1(T) = 0.000004  \u03bb_min(G) = 4.340249e-04  \u03bb_max(G) = 4.340316e-04  cond(G) = 1.000e+00  PSD violation? False\n\u0394P\u2082N(\u2016\u00b7\u2016\u2082) = 1.041671e-02   \u0394P\u2082N(max) = 1.041671e-02\nnear rank-1? False   h_* (real estimate) \u2248 0.000000   stable_h? True\nDynamic Analysis (N=128):\n  Convergence Rate: 6.773082e-10\n  Max Drift Angle:  0.000000e+00 rad\n  Coherence Ratio:  inf\n  Coherence Ratio (reg.):  3.430508e+08\nVerdict: Geometric obstruction (directions stay distinct; no collapse)\n  \u274c rel_min = 5.000e-01  (smaller is more coherent)\n    [\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591]  thresholds: 0.03 (coherent), 0.15 (weak)\n  \u274c Ces\u00e0ro stability \u0394P\u2082N(\u2016\u00b7\u2016\u2082) = 1.042e-02\n  \u274c Dynamic convergence rate = 6.773e-10\n\nLegend: \u2705 pass, \u274c fail; rel_min bar fills more on stronger coherence. Thresholds: rel_min \u2264 0.03 \u2192 Coherent, 0.03\u20130.15 \u2192 Weak, > 0.15 \u2192 Obstruction.\n"
+    },
+    {
+      "delta": 0.785398,
+      "metrics": {
+        "rel_min": 0.000434,
+        "convergence_rate": 6.773079e-10,
+        "rho_T": 4e-06,
+        "lambda_min": 0.000434,
+        "lambda_max": 0.0004340316,
+        "cond": null
+      },
+      "stdout": "[su3] coarse best at (\u03b1,\u03b2)=(0.000000,1.570796)  detG=1.884e-07  minNorm=4.340e-04  rho(T)=0.000004  \u03bb_min(G)=4.340e-04  \u0394P\u2082N(\u2016\u00b7\u2016\u2082)=1.042e-02  \u0394P\u2082N(max)=1.042e-02\n[su3] final best at (\u03b1,\u03b2)=(-0.785398,0.785398)  detG=1.884e-07  minNorm=4.340e-04  rho(T)=0.000004  \u03bb_min(G)=4.340e-04  \u0394P\u2082N(\u2016\u00b7\u2016\u2082)=1.042e-02  \u0394P\u2082N(max)=1.042e-02\n\n=== SU3 CERTIFICATE === (harmonics 5,6)\nB=1024  Nproj=48  grid=20  tau=0.02  r=0.08  delta=0.7854  Ces\u00e0ro start=I\nbest (alpha, beta) = (-0.785398, 0.785398)\ndet G = 1.883805e-07\nmin ||u + h v||^2 (complex-h) = 4.340249e-04\n\u03c1(T) = 0.000004  \u03bb_min(G) = 4.340249e-04  \u03bb_max(G) = 4.340316e-04  cond(G) = 1.000e+00  PSD violation? False\n\u0394P\u2082N(\u2016\u00b7\u2016\u2082) = 1.041671e-02   \u0394P\u2082N(max) = 1.041671e-02\nnear rank-1? False   h_* (real estimate) \u2248 0.000000   stable_h? True\nDynamic Analysis (N=128):\n  Convergence Rate: 6.773079e-10\n  Max Drift Angle:  1.490116e-08 rad\n  Coherence Ratio:  inf\n  Coherence Ratio (reg.):  3.431905e+08\nVerdict: Geometric obstruction (directions stay distinct; no collapse)\n  \u274c rel_min = 5.000e-01  (smaller is more coherent)\n    [\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591]  thresholds: 0.03 (coherent), 0.15 (weak)\n  \u274c Ces\u00e0ro stability \u0394P\u2082N(\u2016\u00b7\u2016\u2082) = 1.042e-02\n  \u274c Dynamic convergence rate = 6.773e-10\n\nLegend: \u2705 pass, \u274c fail; rel_min bar fills more on stronger coherence. Thresholds: rel_min \u2264 0.03 \u2192 Coherent, 0.03\u20130.15 \u2192 Weak, > 0.15 \u2192 Obstruction.\n"
+    },
+    {
+      "delta": 1.570796,
+      "metrics": {
+        "rel_min": 0.000434,
+        "convergence_rate": 6.773077e-10,
+        "rho_T": 4e-06,
+        "lambda_min": 0.000434,
+        "lambda_max": 0.0004340316,
+        "cond": null
+      },
+      "stdout": "[su3] coarse best at (\u03b1,\u03b2)=(0.000000,3.141593)  detG=1.884e-07  minNorm=4.340e-04  rho(T)=0.000004  \u03bb_min(G)=4.340e-04  \u0394P\u2082N(\u2016\u00b7\u2016\u2082)=1.042e-02  \u0394P\u2082N(max)=1.042e-02\n[su3] final best at (\u03b1,\u03b2)=(-0.785398,2.356194)  detG=1.884e-07  minNorm=4.340e-04  rho(T)=0.000004  \u03bb_min(G)=4.340e-04  \u0394P\u2082N(\u2016\u00b7\u2016\u2082)=1.042e-02  \u0394P\u2082N(max)=1.042e-02\n\n=== SU3 CERTIFICATE === (harmonics 5,6)\nB=1024  Nproj=48  grid=20  tau=0.02  r=0.08  delta=1.5708  Ces\u00e0ro start=I\nbest (alpha, beta) = (-0.785398, 2.356194)\ndet G = 1.883805e-07\nmin ||u + h v||^2 (complex-h) = 4.340249e-04\n\u03c1(T) = 0.000004  \u03bb_min(G) = 4.340249e-04  \u03bb_max(G) = 4.340316e-04  cond(G) = 1.000e+00  PSD violation? False\n\u0394P\u2082N(\u2016\u00b7\u2016\u2082) = 1.041671e-02   \u0394P\u2082N(max) = 1.041671e-02\nnear rank-1? False   h_* (real estimate) \u2248 0.000000   stable_h? True\nDynamic Analysis (N=128):\n  Convergence Rate: 6.773077e-10\n  Max Drift Angle:  1.490116e-08 rad\n  Coherence Ratio:  inf\n  Coherence Ratio (reg.):  3.435285e+08\nVerdict: Geometric obstruction (directions stay distinct; no collapse)\n  \u274c rel_min = 5.000e-01  (smaller is more coherent)\n    [\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591]  thresholds: 0.03 (coherent), 0.15 (weak)\n  \u274c Ces\u00e0ro stability \u0394P\u2082N(\u2016\u00b7\u2016\u2082) = 1.042e-02\n  \u274c Dynamic convergence rate = 6.773e-10\n\nLegend: \u2705 pass, \u274c fail; rel_min bar fills more on stronger coherence. Thresholds: rel_min \u2264 0.03 \u2192 Coherent, 0.03\u20130.15 \u2192 Weak, > 0.15 \u2192 Obstruction.\n"
+    },
+    {
+      "delta": 2.356194,
+      "metrics": {
+        "rel_min": 0.000434,
+        "convergence_rate": 6.773074e-10,
+        "rho_T": 4e-06,
+        "lambda_min": 0.000434,
+        "lambda_max": 0.0004340316,
+        "cond": null
+      },
+      "stdout": "[su3] coarse best at (\u03b1,\u03b2)=(0.000000,4.712389)  detG=1.884e-07  minNorm=4.340e-04  rho(T)=0.000004  \u03bb_min(G)=4.340e-04  \u0394P\u2082N(\u2016\u00b7\u2016\u2082)=1.042e-02  \u0394P\u2082N(max)=1.042e-02\n[su3] final best at (\u03b1,\u03b2)=(-0.785398,3.926991)  detG=1.884e-07  minNorm=4.340e-04  rho(T)=0.000004  \u03bb_min(G)=4.340e-04  \u0394P\u2082N(\u2016\u00b7\u2016\u2082)=1.042e-02  \u0394P\u2082N(max)=1.042e-02\n\n=== SU3 CERTIFICATE === (harmonics 5,6)\nB=1024  Nproj=48  grid=20  tau=0.02  r=0.08  delta=2.3562  Ces\u00e0ro start=I\nbest (alpha, beta) = (-0.785398, 3.926991)\ndet G = 1.883805e-07\nmin ||u + h v||^2 (complex-h) = 4.340249e-04\n\u03c1(T) = 0.000004  \u03bb_min(G) = 4.340249e-04  \u03bb_max(G) = 4.340316e-04  cond(G) = 1.000e+00  PSD violation? False\n\u0394P\u2082N(\u2016\u00b7\u2016\u2082) = 1.041671e-02   \u0394P\u2082N(max) = 1.041671e-02\nnear rank-1? False   h_* (real estimate) \u2248 0.000000   stable_h? True\nDynamic Analysis (N=128):\n  Convergence Rate: 6.773074e-10\n  Max Drift Angle:  1.490116e-08 rad\n  Coherence Ratio:  inf\n  Coherence Ratio (reg.):  3.438665e+08\nVerdict: Geometric obstruction (directions stay distinct; no collapse)\n  \u274c rel_min = 5.000e-01  (smaller is more coherent)\n    [\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591]  thresholds: 0.03 (coherent), 0.15 (weak)\n  \u274c Ces\u00e0ro stability \u0394P\u2082N(\u2016\u00b7\u2016\u2082) = 1.042e-02\n  \u274c Dynamic convergence rate = 6.773e-10\n\nLegend: \u2705 pass, \u274c fail; rel_min bar fills more on stronger coherence. Thresholds: rel_min \u2264 0.03 \u2192 Coherent, 0.03\u20130.15 \u2192 Weak, > 0.15 \u2192 Obstruction.\n"
+    },
+    {
+      "delta": 3.141593,
+      "metrics": {
+        "rel_min": 0.000434,
+        "convergence_rate": 6.773077e-10,
+        "rho_T": 4e-06,
+        "lambda_min": 0.000434,
+        "lambda_max": 0.0004340316,
+        "cond": null
+      },
+      "stdout": "[su3] coarse best at (\u03b1,\u03b2)=(0.000000,0.000000)  detG=1.884e-07  minNorm=4.340e-04  rho(T)=0.000004  \u03bb_min(G)=4.340e-04  \u0394P\u2082N(\u2016\u00b7\u2016\u2082)=1.042e-02  \u0394P\u2082N(max)=1.042e-02\n[su3] final best at (\u03b1,\u03b2)=(-0.785398,-0.785398)  detG=1.884e-07  minNorm=4.340e-04  rho(T)=0.000004  \u03bb_min(G)=4.340e-04  \u0394P\u2082N(\u2016\u00b7\u2016\u2082)=1.042e-02  \u0394P\u2082N(max)=1.042e-02\n\n=== SU3 CERTIFICATE === (harmonics 5,6)\nB=1024  Nproj=48  grid=20  tau=0.02  r=0.08  delta=3.1416  Ces\u00e0ro start=I\nbest (alpha, beta) = (-0.785398, -0.785398)\ndet G = 1.883805e-07\nmin ||u + h v||^2 (complex-h) = 4.340249e-04\n\u03c1(T) = 0.000004  \u03bb_min(G) = 4.340249e-04  \u03bb_max(G) = 4.340316e-04  cond(G) = 1.000e+00  PSD violation? False\n\u0394P\u2082N(\u2016\u00b7\u2016\u2082) = 1.041671e-02   \u0394P\u2082N(max) = 1.041671e-02\nnear rank-1? False   h_* (real estimate) \u2248 0.000000   stable_h? True\nDynamic Analysis (N=128):\n  Convergence Rate: 6.773077e-10\n  Max Drift Angle:  0.000000e+00 rad\n  Coherence Ratio:  inf\n  Coherence Ratio (reg.):  3.440071e+08\nVerdict: Geometric obstruction (directions stay distinct; no collapse)\n  \u274c rel_min = 5.000e-01  (smaller is more coherent)\n    [\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591]  thresholds: 0.03 (coherent), 0.15 (weak)\n  \u274c Ces\u00e0ro stability \u0394P\u2082N(\u2016\u00b7\u2016\u2082) = 1.042e-02\n  \u274c Dynamic convergence rate = 6.773e-10\n\nLegend: \u2705 pass, \u274c fail; rel_min bar fills more on stronger coherence. Thresholds: rel_min \u2264 0.03 \u2192 Coherent, 0.03\u20130.15 \u2192 Weak, > 0.15 \u2192 Obstruction.\n"
+    }
+  ],
+  "verdicts": [
+    null
+  ],
+  "invariant": true
+}

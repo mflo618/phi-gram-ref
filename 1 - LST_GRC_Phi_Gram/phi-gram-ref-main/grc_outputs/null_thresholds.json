@@ -1,0 +1,25 @@
+{
+  "source": "union-null(rank+coxeter)",
+  "alpha": 0.01,
+  "thresholds": {
+    "rel_min": 0.000434,
+    "convergence_rate": 1.182754e-09
+  },
+  "summary": {
+    "rel_min": {
+      "mu": -7.742466023863891,
+      "sigma": 2.1316282072803006e-14,
+      "n": 110
+    },
+    "convergence_rate": {
+      "mu": -20.98371972095056,
+      "sigma": 0.3871031451004631,
+      "n": 110
+    }
+  },
+  "counts": {
+    "rank": 60,
+    "coxeter": 50,
+    "union": 110
+  }
+}

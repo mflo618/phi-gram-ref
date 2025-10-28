@@ -1,0 +1,20 @@
+{
+  "scanner_cmd": ["python", "phi_gram_ref.py"],
+  "objective": "relmin",
+
+  "delta_values": [0.0, 0.785398, 1.570796, 2.356194, 3.141593],
+  "delta_offset": 0.44879895,
+
+  "su_groups_for_suite": ["su3", "su4"],
+
+  "null": {
+    "families": ["rank", "coxeter"],
+    "scrambles_per_pair": 10,
+    "su_for_null": "su3",
+    "rank_pairs": [[4,5], [5,6], [6,7], [7,8], [8,9], [9,10]],
+    "coxeter_pairs": [[4,5], [5,6], [6,7], [7,8], [8,9]]
+  },
+
+  "alpha": 0.01,
+  "output_dir": "grc_outputs"
+}
