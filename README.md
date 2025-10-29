@@ -24,7 +24,7 @@
 
 ---
 
-# README_START_HERE.md (drop-in)
+# README_START_HERE.md
 
 **Two ways to verify, depending on your focus:**
 
@@ -69,9 +69,7 @@ python phi_gram_ref.py --harmonics 6,7 --group su3 --cesaro-start-T --check-dyna
 
 ---
 
-# 2 – LST_FU_Alpha_FSC/README_AUDIT.md (already in your v1b pack)
-
-Keep the plain-text guide you have. Add this tiny “At a glance” box at the top:
+# 2 – LST_FU_Alpha_FSC/README_AUDIT.md
 
 **At a glance (expected outputs):**
 
@@ -86,7 +84,7 @@ Keep the plain-text guide you have. Add this tiny “At a glance” box at the t
 
 ---
 
-# 3 – LST_FU_ProofPack_A_v3/README.md (concise framing)
+# 3 – LST_FU_ProofPack_A_v3/README.md
 
 **What this proves:**
 
