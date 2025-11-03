@@ -104,5 +104,44 @@ python mass_engine.py --config toggles.yaml
 bash run_doc_style.sh
 ```
 
+
+
 ---
+
+# LST Computational Tools
+
+This repository contains computational tools and reference implementations for the Light-Space Theory (LST) framework.
+
+## About
+
+These scripts are the official computational certificates for the foundational papers on LST. They are provided to ensure full transparency and allow for independent verification of the theory's numerical and algebraic results.
+
+For the complete theoretical context and the full collection of papers, please see the Light-Space Theory community on Zenodo.
+
+## Usage
+
+Each script is designed to be run from the command line. For specific instructions, arguments, and the physical context for each tool, please refer to the corresponding scientific paper.
+
+**Prerequisites:**
+- Python 3
+- NumPy (`pip install numpy`)
+
+**Generic Example:**
+```bash
+python [script_name].py --[arguments]
+```
+
+## License
+
+This project is licensed under the **GNU General Public License v3.0 (GPLv3)**.
+
+The core principle of this license is "ShareAlike" (or "copyleft"). You are free to run, study, share, and modify this software. If you distribute a modified version, you must also share your modifications under the same GPLv3 license.
+
+This ensures that the project and its derivatives will always remain open-source and accessible to the entire community. **The full text of the license is available in the `LICENSE` file.**
+
+## Contact
+
+For more information on the theoretical framework, please visit [mflo.life](https://mflo.life).
+```
+
 
