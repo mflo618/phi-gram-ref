@@ -116,7 +116,7 @@ This repository contains computational tools and reference implementations for t
 
 These scripts are the official computational certificates for the foundational papers on LST. They are provided to ensure full transparency and allow for independent verification of the theory's numerical and algebraic results.
 
-For the complete theoretical context and the full collection of papers, please see the Light-Space Theory community on Zenodo.
+For the complete theoretical context and the full collection of papers, please see the Light-Space Theory community on mflo.life.
 
 ## Usage
 
